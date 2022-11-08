@@ -7,21 +7,20 @@ min Keycloak ver 16.3
 For example here is the notification of the user updated by administrator
 
 ```
-{
-  "@class" : "com.github.aznamier.keycloak.event.provider.EventAdminNotificationMqMsg",
-  "time" : 1596951200408,
-  "realmId" : "MYREALM",
+ {
+  "@class" : "com.nhamza.keykloak.event.provider.EventAdminNotificationMqMsg",
+  "time" : 1667904225531,
+  "realmId" : "d702a427-b2eb-444e-9b17-794d0bd7ea39",
   "authDetails" : {
-    "realmId" : "master",
-    "clientId" : "********-****-****-****-**********",
-    "userId" : "********-****-****-****-**********",
-    "ipAddress" : "192.168.1.1"
+    "realmId" : "d702a427-b2eb-444e-9b17-794d0bd7ea39",
+    "clientId" : "14af8af8-2cb8-4101-aace-aeecac5f87ff",
+    "userId" : "06ecb7ee-b62f-4413-b141-bcf8fa941599",
+    "ipAddress" : "172.22.0.1"
   },
   "resourceType" : "USER",
-  "operationType" : "UPDATE",
-  "resourcePath" : "users/********-****-****-****-**********",
-  "representation" : "representation details here....",
-  "error" : null,
+  "operationType" : "CREATE",
+  "resourcePath" : "users/32b1d12a-f100-4890-8113-161c80bd2adb",
+  "representation" : "{\"username\":\"UserOne\",\"enabled\":true,\"emailVerified\":false,\"firstName\":\"User\",\"lastName\":\"One\",\"email\":\"\",\"requiredActions\":[],\"groups\":[]}",
   "resourceTypeAsString" : "USER"
 }
 ```
@@ -38,11 +37,11 @@ The payload will be via a REST post call forwoarded to the in configuration defi
 
 #### Configuration :  just configure **ENVIRONMENT VARIABLES**,
  In the case no configuration submitted these defalut value will be applied
-        KK_TO_TCM_URL: localhost
-        KK_TO_TCM_PORT: 8042
-        KK_TO_TCM_ENDPOINT: /kcUpdate
-        KK_TO_TCM_USERNAME: user
-        KK_TO_TCM_PASSWORD: password
+     -   KK_TO_TCM_URL: localhost
+     -   KK_TO_TCM_PORT: 8042
+     -   KK_TO_TCM_ENDPOINT: /kcUpdate
+     -   KK_TO_TCM_USERNAME: user
+     .   KK_TO_TCM_PASSWORD: password
 
 
 
