@@ -33,15 +33,15 @@ The payload will be via a REST post call forwoarded to the in configuration defi
     1. Keycloak version 17+ `/opt/keycloak/providers/keycloak-to-rest-event-listener-1.0.jar` 
 3. Configure keycloak as described below 
 4. Restart the Keycloak server
-5. under `Manage > Events > Config > Events Config > Event Listeners` :Enable the Eventlistner in Keycloak UI by adding **keycloak-to-rest** 
+5. under `Manage > Events > Config > Events Config > Event Listeners`: Enable the Eventlistner in Keycloak UI by adding **keycloak-to-rest** 
 
 #### Configuration :  just configure **ENVIRONMENT VARIABLES**,
  In the case no configuration submitted these defalut value will be applied
-     -   KK_TO_TCM_URL: localhost
-     -   KK_TO_TCM_PORT: 8042
-     -   KK_TO_TCM_ENDPOINT: /kcUpdate
-     -   KK_TO_TCM_USERNAME: user
-     .   KK_TO_TCM_PASSWORD: password
+  - KK_TO_TCM_URL: localhost
+  - KK_TO_TCM_PORT: 8042
+  - KK_TO_TCM_ENDPOINT: /kcUpdate
+  - KK_TO_TCM_USERNAME: user
+  - KK_TO_TCM_PASSWORD: password
 
 
 
