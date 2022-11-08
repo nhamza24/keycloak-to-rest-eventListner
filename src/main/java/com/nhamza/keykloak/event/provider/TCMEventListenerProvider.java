@@ -1,9 +1,14 @@
 package com.nhamza.keykloak.event.provider;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -25,9 +30,6 @@ public class TCMEventListenerProvider implements EventListenerProvider {
     // The timeout for waiting for data
     private static final int SOCKET_TIMEOUT = 60000;
 
-    private static final int MAX_TOTAL_CONNECTIONS = 50;
-    private static final int DEFAULT_KEEP_ALIVE_TIME_MILLIS = 20 * 1000;
-    private static final int CLOSE_IDLE_CONNECTION_WAIT_TIME_SECS = 30;
     private final EventListenerTransaction tx =
         new EventListenerTransaction(this::publishAdminEvent, this::publishEvent);
 
@@ -57,13 +59,17 @@ public class TCMEventListenerProvider implements EventListenerProvider {
     private void publishEvent(Event event) {
         EventClientNotificationMqMsg msg = EventClientNotificationMqMsg.create(event);
         String messageString = TCMConfig.writeAsJson(msg, true);
-        this.publishNotification(messageString);
+        if (messageString.contains("\"resourceType\" : \"USER\"")) {
+            this.publishNotification(messageString);
+        }
     }
 
     private void publishAdminEvent(AdminEvent adminEvent, boolean includeRepresentation) {
         EventAdminNotificationMqMsg msg = EventAdminNotificationMqMsg.create(adminEvent);
         String messageString = TCMConfig.writeAsJson(msg, true);
-        this.publishNotification(messageString);
+      if (messageString.contains("\"resourceType\" : \"USER\"")) {
+            this.publishNotification(messageString);
+        }
     }
 
     private void publishNotification(String messageString) {
@@ -78,10 +84,10 @@ public class TCMEventListenerProvider implements EventListenerProvider {
                 .setConnectTimeout(CONNECT_TIMEOUT)
                 .setSocketTimeout(SOCKET_TIMEOUT).build();
             httpPost.setConfig(requestConfig);
-            StringEntity entity = new StringEntity(messageString);
+            StringEntity entity = new StringEntity(messageString, ContentType.APPLICATION_JSON);
             httpPost.setEntity(entity);
-            httpPost.setHeader("Accept", "application/json");
-            CloseableHttpResponse response = client.execute(httpPost);
+                  httpPost.setHeader("Accept", "application/json");
+            client.execute(httpPost);
             log.infof("keycloak-to-TCM SUCCESS sending message: %s%n", messageString);
 
         } catch (Exception ex) {
