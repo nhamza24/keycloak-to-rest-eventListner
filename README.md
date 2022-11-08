@@ -4,7 +4,7 @@
 
 min Keycloak ver 16.3
 
-For example here is the notification of the user updated by administrator
+For example here is the notification of the creation of a new user
 
 ```
  {
