@@ -1,21 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.nhamza.keycloak.event.provider</groupId>
-	<artifactId>keycloak-to-rest-eventListner</artifactId>
-	<packaging>jar</packaging>
-	<version>1.0</version>
+    <groupId>com.nhamza.keycloak.event.provider</groupId>
+    <artifactId>keycloak-to-rest-eventListner</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0</version>
 
 
-	<name>keycloak-to-rest-eventListner</name>
+    <name>keycloak-to-rest-eventListner</name>
 
-	<description>Keycloak extention serve to pulish selected admin events to a rest endpoint</description>
+    <description>Keycloak extention serve to pulish selected admin events to a rest endpoint</description>
 
-	<properties>
-	<keycloak.version>18.0.0</keycloak.version>
-    	<jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
-	</properties>
+    <properties>
+        <keycloak.version>18.0.0</keycloak.version>
+        <jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
+    </properties>
 
 
     <dependencies>
@@ -70,32 +70,25 @@
             </plugin>
 
             <!-- Maven Assembly Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<finalName>${jar.finalName}</finalName>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-				<executions>
-				  <execution>
-					<id>make-assembly</id>
-					<phase>package</phase>
-					<goals>
-						<goal>single</goal>
-					</goals>
-				  </execution>
-				</executions>
-			</plugin>
-			  <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <skip>false</skip>
+                    <finalName>${jar.finalName}</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
