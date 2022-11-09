@@ -77,8 +77,8 @@ public class TCMEventListenerProvider implements EventListenerProvider {
             if (messageString.contains("resourceType\" : \"USER") ||
                 messageString.contains("resourceType\" : \"REALM_ROLE_MAPPING")) {
                 try {
-                    log.info( "publish Event to host :" + cfg.getHostUrl() + " endpoint :" + cfg.getEndpoint() + " port: " + cfg.getPort());
-                    log.infof("keycloak-to-TCM sending message: %s%n", messageString);
+                    log.info( "\n############ publish Event to host :" + cfg.getHostUrl() + " port: " + cfg.getPort()+ " endpoint :" + cfg.getEndpoint() +" ############");
+                    log.infof("\n keycloak-to-TCM sending message: %s%n", messageString);
                     StringEntity entity = new StringEntity(messageString, ContentType.APPLICATION_JSON);
                     httpPost.setEntity(entity);
                     httpPost.setHeader("Accept", "application/json");
@@ -86,7 +86,7 @@ public class TCMEventListenerProvider implements EventListenerProvider {
                     log.infof("keycloak-to-TCM SUCCESS sending user update message");
 
                 } catch (Exception ex) {
-                    log.errorf(ex, "keycloak-to-TCM ERROR sending message: %s%n", messageString);
+                    log.errorf(ex, "\n keycloak-to-TCM ERROR sending message: %s%n", messageString);
                 }
             }
         }
