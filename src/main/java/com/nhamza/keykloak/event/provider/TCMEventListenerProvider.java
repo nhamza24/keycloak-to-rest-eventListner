@@ -1,10 +1,5 @@
 package com.nhamza.keykloak.event.provider;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -24,6 +19,7 @@ public class TCMEventListenerProvider implements EventListenerProvider {
     private static final Logger log = Logger.getLogger(TCMEventListenerProvider.class);
 
     private final TCMConfig cfg;
+    private final HttpPost httpPost;
     private final CloseableHttpClient client;
     private static final int REQUEST_TIMEOUT = 30000;
     private static final int CONNECT_TIMEOUT = 30000;
@@ -38,12 +34,19 @@ public class TCMEventListenerProvider implements EventListenerProvider {
 
         this.client = HttpClients.createDefault();
         session.getTransactionManager().enlistAfterCompletion(tx);
-
+        httpPost =
+            new HttpPost("http://" + cfg.getHostUrl() + ":" + cfg.getPort() + cfg.getEndpoint());
+        final HttpHost proxy = new HttpHost(cfg.getHostUrl(), cfg.getPort());
+        RequestConfig requestConfig = RequestConfig.custom()
+            .setProxy(proxy)
+            .setConnectionRequestTimeout(REQUEST_TIMEOUT)
+            .setConnectTimeout(CONNECT_TIMEOUT)
+            .setSocketTimeout(SOCKET_TIMEOUT).build();
+        httpPost.setConfig(requestConfig);
     }
 
     @Override
     public void close() {
-
     }
 
     @Override
@@ -59,40 +62,33 @@ public class TCMEventListenerProvider implements EventListenerProvider {
     private void publishEvent(Event event) {
         EventClientNotificationMqMsg msg = EventClientNotificationMqMsg.create(event);
         String messageString = TCMConfig.writeAsJson(msg, true);
-        if (messageString.contains("\"resourceType\" : \"USER\"")) {
-            this.publishNotification(messageString);
-        }
+        this.publishNotification(messageString);
     }
 
     private void publishAdminEvent(AdminEvent adminEvent, boolean includeRepresentation) {
         EventAdminNotificationMqMsg msg = EventAdminNotificationMqMsg.create(adminEvent);
         String messageString = TCMConfig.writeAsJson(msg, true);
-      if (messageString.contains("\"resourceType\" : \"USER\"")) {
-            this.publishNotification(messageString);
-        }
+        this.publishNotification(messageString);
     }
 
     private void publishNotification(String messageString) {
 
-        try {
-            log.info("host :" + cfg.getHostUrl() + " endpoint :" + cfg.getEndpoint() + " port: " + cfg.getPort());
-            HttpPost httpPost = new HttpPost("http://" + cfg.getHostUrl() + ":" + cfg.getPort() + cfg.getEndpoint());
-            final HttpHost proxy = new HttpHost(cfg.getHostUrl(), cfg.getPort());
-            RequestConfig requestConfig = RequestConfig.custom()
-                .setProxy(proxy)
-                .setConnectionRequestTimeout(REQUEST_TIMEOUT)
-                .setConnectTimeout(CONNECT_TIMEOUT)
-                .setSocketTimeout(SOCKET_TIMEOUT).build();
-            httpPost.setConfig(requestConfig);
-            StringEntity entity = new StringEntity(messageString, ContentType.APPLICATION_JSON);
-            httpPost.setEntity(entity);
-                  httpPost.setHeader("Accept", "application/json");
-            client.execute(httpPost);
-            log.infof("keycloak-to-TCM SUCCESS sending message: %s%n", messageString);
+        if (messageString != null) {
+            if (messageString.contains("resourceType\" : \"USER") ||
+                messageString.contains("resourceType\" : \"REALM_ROLE_MAPPING")) {
+                try {
+                    log.info( "publish Event to host :" + cfg.getHostUrl() + " endpoint :" + cfg.getEndpoint() + " port: " + cfg.getPort());
+                    log.infof("keycloak-to-TCM sending message: %s%n", messageString);
+                    StringEntity entity = new StringEntity(messageString, ContentType.APPLICATION_JSON);
+                    httpPost.setEntity(entity);
+                    httpPost.setHeader("Accept", "application/json");
+                    client.execute(httpPost);
+                    log.infof("keycloak-to-TCM SUCCESS sending user update message");
 
-        } catch (Exception ex) {
-            log.errorf(ex, "keycloak-to-TCM ERROR sending message: %s%n", messageString);
+                } catch (Exception ex) {
+                    log.errorf(ex, "keycloak-to-TCM ERROR sending message: %s%n", messageString);
+                }
+            }
         }
     }
-
 }
